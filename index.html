@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f5f5f7">
+  <meta name="description" content="Download Dragon Cookbook for iOS and Android.">
+  <title>Download Dragon Cookbook</title>
+
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f5f5f7;
+      --surface: rgba(255, 255, 255, 0.72);
+      --surface-solid: #ffffff;
+      --text: #171717;
+      --muted: #6e6e73;
+      --border: rgba(0, 0, 0, 0.08);
+      --accent: #007aff;
+      --accent-dark: #0066d6;
+      --shadow: 0 20px 60px rgba(0, 0, 0, 0.10);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #101010;
+        --surface: rgba(30, 30, 32, 0.78);
+        --surface-solid: #1e1e20;
+        --text: #f5f5f7;
+        --muted: #a1a1a6;
+        --border: rgba(255, 255, 255, 0.10);
+        --accent: #0a84ff;
+        --accent-dark: #409cff;
+        --shadow: 0 20px 60px rgba(0, 0, 0, 0.40);
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+                   "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 50% -10%, rgba(0, 122, 255, 0.12), transparent 35%),
+        var(--bg);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      width: min(100%, 900px);
+      margin: 0 auto;
+      padding: 56px 20px 72px;
+    }
+
+    .hero {
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(32px, 6vw, 54px);
+      line-height: 1.08;
+      letter-spacing: -0.045em;
+      font-weight: 750;
+    }
+
+    .subtitle {
+      max-width: 620px;
+      margin: 16px auto 0;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.5;
+    }
+
+    .app-preview {
+      width: min(100%, 680px);
+      margin: 38px auto 28px;
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      background: var(--surface-solid);
+    }
+
+    .app-preview img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .download-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .download-button {
+      appearance: none;
+      border: 0;
+      border-radius: 16px;
+      padding: 15px 28px;
+      min-width: 190px;
+      background: var(--accent);
+      color: white;
+      font: inherit;
+      font-size: 17px;
+      font-weight: 650;
+      cursor: pointer;
+      box-shadow: 0 8px 22px rgba(0, 122, 255, 0.25);
+      transition: transform .18s ease, background .18s ease, box-shadow .18s ease;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .download-button:hover {
+        background: var(--accent-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 12px 28px rgba(0, 122, 255, 0.30);
+      }
+    }
+
+    .download-button:active {
+      transform: scale(.97);
+    }
+
+    .download-button:focus-visible,
+    .os-button:focus-visible,
+    .open-button:focus-visible,
+    .desktop-button:focus-visible {
+      outline: 3px solid rgba(0, 122, 255, .35);
+      outline-offset: 3px;
+    }
+
+    .os-picker {
+      width: min(100%, 460px);
+      margin-top: 16px;
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: max-height .38s ease, opacity .28s ease, transform .38s ease;
+    }
+
+    .os-picker.open {
+      max-height: 160px;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .os-card {
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      background: var(--surface);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .os-button {
+      border: 1px solid var(--border);
+      background: var(--surface-solid);
+      color: var(--text);
+      border-radius: 15px;
+      padding: 15px 10px;
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform .18s ease, border-color .18s ease;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .os-button:hover {
+        transform: translateY(-2px);
+        border-color: rgba(0, 122, 255, .45);
+      }
+    }
+
+    .instructions {
+      width: min(100%, 680px);
+      margin: 42px auto 0;
+      text-align: left;
+      display: none;
+      animation: appear .35s ease both;
+    }
+
+    .instructions.visible {
+      display: block;
+    }
+
+    @keyframes appear {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .instructions h2 {
+      margin: 0;
+      font-size: 27px;
+      letter-spacing: -0.025em;
+    }
+
+    .requirements {
+      margin: 10px 0 22px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .steps {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      counter-reset: step;
+      display: grid;
+      gap: 12px;
+    }
+
+    .steps li {
+      counter-increment: step;
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 13px;
+      align-items: start;
+      padding: 16px;
+      border-radius: 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+
+    .steps li::before {
+      content: counter(step);
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--accent);
+      color: white;
+      font-weight: 700;
+    }
+
+    .steps strong {
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .steps span {
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .open-button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 13px 20px;
+      border-radius: 14px;
+      background: var(--accent);
+      color: white;
+      text-decoration: none;
+      font-weight: 650;
+      transition: transform .18s ease, background .18s ease;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .open-button:hover {
+        background: var(--accent-dark);
+        transform: translateY(-2px);
+      }
+    }
+
+    .note {
+      margin: 20px 0 0;
+      padding: 15px 17px;
+      border-radius: 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    .desktop-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      place-items: center;
+      padding: 24px;
+      background: rgba(0, 0, 0, .42);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    .desktop-overlay.show {
+      display: grid;
+    }
+
+    .desktop-card {
+      width: min(100%, 480px);
+      padding: 32px;
+      border-radius: 28px;
+      background: var(--surface-solid);
+      border: 1px solid var(--border);
+      box-shadow: 0 30px 90px rgba(0, 0, 0, .25);
+      text-align: center;
+      animation: desktopIn .35s ease both;
+    }
+
+    @keyframes desktopIn {
+      from {
+        opacity: 0;
+        transform: scale(.94) translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .desktop-card h2 {
+      margin: 0;
+      font-size: 28px;
+      letter-spacing: -0.03em;
+    }
+
+    .desktop-card p {
+      margin: 12px 0 22px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .desktop-button {
+      border: 0;
+      border-radius: 14px;
+      padding: 13px 20px;
+      background: var(--accent);
+      color: white;
+      font: inherit;
+      font-weight: 650;
+      cursor: pointer;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .desktop-button:hover {
+        background: var(--accent-dark);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .page {
+        padding: 38px 16px 54px;
+      }
+
+      h1 {
+        font-size: 35px;
+      }
+
+      .subtitle {
+        font-size: 16px;
+      }
+
+      .app-preview {
+        margin-top: 28px;
+        border-radius: 21px;
+      }
+
+      .instructions {
+        margin-top: 34px;
+      }
+
+      .desktop-card {
+        padding: 27px 22px;
+      }
+    }
+
+    @media (min-width: 701px) {
+      body.desktop-detected {
+        overflow: hidden;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <section class="hero">
+      <h1>Download Dragon Cookbook today!</h1>
+      <p class="subtitle">
+        Get Dragon Cookbook on your mobile device and enjoy the app wherever you go.
+      </p>
+
+      <div class="app-preview">
+        <picture>
+          <source srcset="IMG_6716.png" media="(prefers-color-scheme: dark)">
+          <img src="IMG_6715.png" alt="Dragon Cookbook app preview">
+        </picture>
+      </div>
+
+      <div class="download-area">
+        <button class="download-button" id="downloadButton" type="button">
+          Download
+        </button>
+
+        <div class="os-picker" id="osPicker" aria-hidden="true">
+          <div class="os-card">
+            <button class="os-button" type="button" data-os="ios"> iOS</button>
+            <button class="os-button" type="button" data-os="android">Android</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="instructions" id="iosInstructions">
+      <h2>Install Dragon Cookbook on iOS</h2>
+      <p class="requirements">
+        Dragon Cookbook requires <strong>iOS 27</strong> or later.
+      </p>
+
+      <ol class="steps">
+        <li>
+          <div>
+            <strong>Open Dragon Cookbook</strong>
+            <span>Tap the button below to open Dragon Cookbook in a new tab.</span>
+          </div>
+        </li>
+        <li>
+          <div>
+            <strong>Open the Share menu</strong>
+            <span>In Safari, tap the Share button at the bottom of the screen.</span>
+          </div>
+        </li>
+        <li>
+          <div>
+            <strong>Add to Home Screen</strong>
+            <span>Scroll down, choose “Add to Home Screen”, then tap “Add”.</span>
+          </div>
+        </li>
+      </ol>
+
+      <a class="open-button"
+         href="https://dragon-cookbook-pwa-y2qg.bolt.host"
+         target="_blank"
+         rel="noopener noreferrer">
+        Open Dragon Cookbook
+      </a>
+
+      <p class="note">
+        <strong>Note:</strong> The app may say “made in Bolt.” You can just click the
+        X on that message and hide it.
+      </p>
+    </section>
+
+    <section class="instructions" id="androidInstructions">
+      <h2>Install Dragon Cookbook on Android</h2>
+      <p class="requirements">
+        Dragon Cookbook requires <strong>Android 15, 16 or 17</strong>.
+      </p>
+
+      <ol class="steps">
+        <li>
+          <div>
+            <strong>Open Dragon Cookbook</strong>
+            <span>Tap the button below to open Dragon Cookbook in a new tab.</span>
+          </div>
+        </li>
+        <li>
+          <div>
+            <strong>Open the browser menu</strong>
+            <span>In Chrome, tap the three-dot menu in the top-right corner.</span>
+          </div>
+        </li>
+        <li>
+          <div>
+            <strong>Install the app</strong>
+            <span>Choose “Install app” or “Add to Home screen”, then follow the prompt.</span>
+          </div>
+        </li>
+      </ol>
+
+      <a class="open-button"
+         href="https://dragon-cookbook-pwa-y2qg.bolt.host"
+         target="_blank"
+         rel="noopener noreferrer">
+        Open Dragon Cookbook
+      </a>
+
+      <p class="note">
+        <strong>Note:</strong> The app may say “made in Bolt.” You can just click the
+        X on that message and hide it.
+      </p>
+    </section>
+  </main>
+
+  <div class="desktop-overlay" id="desktopOverlay" role="dialog" aria-modal="true">
+    <div class="desktop-card">
+      <h2>Dragon Cookbook is mobile-only</h2>
+      <p>
+        Dragon Cookbook is designed to work on mobile devices. You can still visit
+        the website from this computer if you'd like.
+      </p>
+      <button class="desktop-button" id="visitAnyway" type="button">
+        Visit the website anyway
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const DRAGON_URL = "https://dragon-cookbook-pwa-y2qg.bolt.host";
+
+    const downloadButton = document.getElementById("downloadButton");
+    const osPicker = document.getElementById("osPicker");
+    const iosInstructions = document.getElementById("iosInstructions");
+    const androidInstructions = document.getElementById("androidInstructions");
+    const desktopOverlay = document.getElementById("desktopOverlay");
+    const visitAnyway = document.getElementById("visitAnyway");
+
+    function isMobileDevice() {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      ) || (navigator.maxTouchPoints > 1 && window.innerWidth <= 1100);
+    }
+
+    function showInstructions(os) {
+      iosInstructions.classList.toggle("visible", os === "ios");
+      androidInstructions.classList.toggle("visible", os === "android");
+
+      const target = os === "ios" ? iosInstructions : androidInstructions;
+      setTimeout(() => {
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 80);
+    }
+
+    downloadButton.addEventListener("click", () => {
+      const isOpen = osPicker.classList.toggle("open");
+      osPicker.setAttribute("aria-hidden", String(!isOpen));
+    });
+
+    document.querySelectorAll(".os-button").forEach(button => {
+      button.addEventListener("click", () => {
+        showInstructions(button.dataset.os);
+      });
+    });
+
+    visitAnyway.addEventListener("click", () => {
+      desktopOverlay.classList.remove("show");
+      document.body.classList.remove("desktop-detected");
+    });
+
+    if (!isMobileDevice()) {
+      desktopOverlay.classList.add("show");
+      document.body.classList.add("desktop-detected");
+    }
+
+    // Keep the browser theme color synchronized with the current system theme.
+    const themeMeta = document.querySelector('meta[name="theme-color"]');
+    const darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+    function updateThemeColor() {
+      themeMeta.setAttribute("content", darkQuery.matches ? "#101010" : "#f5f5f7");
+    }
+
+    updateThemeColor();
+    darkQuery.addEventListener("change", updateThemeColor);
+  </script>
+</body>
+</html>
